@@ -1,7 +1,5 @@
 import { useFetch } from "./useFetch"
 
-const BASE_URL = "http://localhost:5000"
-
 export const useFetchVolcano = ( volcanoID, token ) => {
     const url = `/api/volcano/${volcanoID}`
     const headers = token ? {'Authorization': `Bearer ${token}`} : null
