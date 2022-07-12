@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
+const Volcano = require('../models/volcanoes')
 
-router.get('/', function(req, res, next) {
+router.get('/', async function(req, res, next) {
   country = req.query.country
   populatedWithin = req.query.populatedWithin
   acceptablePopulatedWithin = ["5km", "10km", "30km", "100km"]
@@ -16,36 +17,23 @@ router.get('/', function(req, res, next) {
   } 
   else if(acceptablePopulatedWithin.includes(populatedWithin))
   {
-  req.db.from('data')
-    .select('id',"name", "country", "region", "subregion")
-    .where("country", "=", country).andWhere('population_' + populatedWithin, '>', "0")
-      .then(rows => {
-          return res.status(200).json(rows)
-      })
-      .catch(err => {
-        console.log(err)
-        return res.status(400).json({
-          error: true,
-          message: "Bad request"
-        })
-      })
-  } 
-  else 
-  {
-    req.db.from('data')
-      .select('id',"name", "country", "region", "subregion")
-      .where("country", "=", country)
-    .then(rows => {
-        return res.status(200).json(rows)
-    })
-    .catch(err => {
-      console.log(err)
-      return res.status(400).json({
-        error: true,
-        message: "Bad request"
-      })
-    })
+    const volcanoes = await Volcano.find({country: country[0].toUpperCase() + country.slice(1).toLowerCase(), ['population_' + populatedWithin]: {$gt: 0} })
+    .select("id name country region subregion -_id")
+
+    console.log(volcanoes.length)
+
+    return res.status(200).json(volcanoes)
   }
-});
+  else
+  {
+    const volcanoes = await Volcano.find({country: country[0].toUpperCase() + country.slice(1).toLowerCase()})
+    .select("id name country region subregion -_id")
+    
+    console.log(volcanoes.length)
+
+    return res.status(200).json(volcanoes)
+  }
+})
+
 
 module.exports = router;

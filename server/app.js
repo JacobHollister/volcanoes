@@ -5,26 +5,16 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors')
 const helmet = require('helmet')
-const swaggerUi = require("swagger-ui-express");
-const swaggerDoc = require("./docs/swagger.json");
-
-const options = require('./knexfile.js');
-const knex = require('knex')(options); 
+const connectDB = require('./db/connect')
 
 const usersRouter = require('./routes/users');
 const countriesRouter = require('./routes/countries');
-const adminRouter = require('./routes/admin');
 const volcanoRouter = require('./routes/volcano');
 const volcanoesRouter = require('./routes/volcanoes');
 
 const app = express();
 
 app.use(helmet())
-
-app.use((req, res, next) => {
-  req.db = knex
-  next()
-}) 
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -37,18 +27,11 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use("/", swaggerUi.serve);
-app.get(
-  "/",
-  swaggerUi.setup(swaggerDoc, {
-    swaggerOptions: { defaultModelsExpandDepth: -1 },
-  })
-);
+
 app.use('/user', usersRouter);
-app.use('/countries', countriesRouter);
-app.use('/volcanoes', volcanoesRouter);
-app.use('/volcano', volcanoRouter);
-app.use('/me', adminRouter);
+app.use('/api/countries', countriesRouter);
+app.use('/api/volcanoes', volcanoesRouter);
+app.use('/api/volcano', volcanoRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -66,4 +49,24 @@ app.use(function(err, req, res, next) {
   res.render('error');
 });
 
-module.exports = app;
+const port = process.env.PORT || 5000;
+
+if(process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, '../frontend/build')))
+  
+  app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, '../', 'frontend', 'build', 'index.html')))
+} else {
+  app.get('/', (req, res) => res.send('Server not set to production'))
+}
+
+const start = async () => {
+  try {
+    await connectDB(process.env.MONGO_URI)
+    app.listen(port, console.log(`Server is listening on port ${port}`))
+  } catch (error){
+    console.log(error)
+  }
+}
+
+start()
+// module.exports = app;

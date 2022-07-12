@@ -66,7 +66,7 @@ export function AuthProvider({children}) {
 
 
     const register = (formData) => {
-        const url = "http://sefdb02.qut.edu.au:3001/user/register"
+        const url = "http://localhost:5000/user/register"
 
         const config = {
             url,
@@ -89,7 +89,7 @@ export function AuthProvider({children}) {
     }
 
     const login = (formData) => {
-        const url = "http://sefdb02.qut.edu.au:3001/user/login"
+        const url = "http://localhost:5000/user/login"
 
         const config = {
             url,

@@ -18,7 +18,7 @@ const authenticationMiddleware = (req, res, next) => {
     } else {
         return next()
     }
-    const secretKey = process.env.SECRET_KEY
+    const secretKey = process.env.JWT_SECRET
     const authtoken = authHeader.split(' ')[1]
 
     jwt.verify(authtoken, secretKey, (err, decoded) => {

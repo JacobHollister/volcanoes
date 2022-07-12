@@ -1,20 +1,29 @@
 const express = require('express');
 const router = express.Router();
+const Volcano = require('../models/volcanoes')
 
-router.get('/', function(req, res, next) {
-    if(Object.keys(req.query).length > 0){
+router.get('/', async function(req, res, next) {
+    const volcanoes = await Volcano.find() 
+
+    if(Object.keys(volcanoes) < 1) {
         return res.status(400).json({
             error: true,
-            message: "Invalid query parameters. Query parameters are not permitted."
+            message: "No countries found"
         })
     }
+    const countries = {}
+    
+    volcanoes.forEach(volcano => {
+        countries[volcano.country] = 0
+    })
 
-    req.db.from('data')
-        .select('country')
-        .then(rows => {
-            countries = [...new Set(rows.map(data => data.country).sort())]
-            res.status(200).json(countries)
-        })
+    const countriesSorted = Object.keys(countries).sort(function(a, b){
+        if(a < b) { return -1; }
+        if(a > b) { return 1; }
+        return 0;
+    })
+
+    return res.status(200).json(countriesSorted)
 
 });
 
