@@ -16,7 +16,7 @@ const app = express();
 
 app.use(helmet())
 
-server.use(
+app.use(
   helmet.contentSecurityPolicy({
     directives: {
       ...helmet.contentSecurityPolicy.getDefaultDirectives(),
