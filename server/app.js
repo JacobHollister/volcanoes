@@ -4,7 +4,6 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const cors = require('cors')
-const helmet = require('helmet')
 const connectDB = require('./db/connect')
 
 const usersRouter = require('./routes/users');
@@ -13,21 +12,6 @@ const volcanoRouter = require('./routes/volcano');
 const volcanoesRouter = require('./routes/volcanoes');
 
 const app = express();
-
-app.use(
-  helmet({
-      crossOriginEmbedderPolicy: false,
-      crossOriginResourcePolicy: {
-          allowOrigins: ['*']
-      },
-      contentSecurityPolicy: {
-          directives: {
-              defaultSrc: ['*'],
-              scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"]
-          }
-      }
-  })
-)
 
 app.use(
   helmet.contentSecurityPolicy({
