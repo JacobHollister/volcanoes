@@ -14,7 +14,20 @@ const volcanoesRouter = require('./routes/volcanoes');
 
 const app = express();
 
-app.use(helmet())
+app.use(
+  helmet({
+      crossOriginEmbedderPolicy: false,
+      crossOriginResourcePolicy: {
+          allowOrigins: ['*']
+      },
+      contentSecurityPolicy: {
+          directives: {
+              defaultSrc: ['*'],
+              scriptSrc: ["* data: 'unsafe-eval' 'unsafe-inline' blob:"]
+          }
+      }
+  })
+)
 
 app.use(
   helmet.contentSecurityPolicy({

@@ -26,6 +26,7 @@
     "mongoose": "^5.11.10",
     "morgan": "~1.9.1",
     "mysql2": "^2.3.3",
+    "nodemon": "^2.0.20",
     "swagger-ui-express": "^4.4.0"
   }
 }
